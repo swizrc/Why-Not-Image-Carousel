@@ -8,13 +8,27 @@ import kotlin.math.abs
 import kotlin.math.min
 
 class CarouselLinearLayoutManager(
-    context: Context,
-    orientation: Int,
-    reverseLayout: Boolean
+        context: Context,
+        orientation: Int,
+        reverseLayout: Boolean,
+        val onOverScrollListener: CarouselOnOverScrollListener?
 ) : LinearLayoutManager(context, orientation, reverseLayout) {
 
     var scaleOnScroll = false
     var scalingFactor = 0f
+
+    private fun executeOverScroll(recycler: RecyclerView.Recycler?,state: RecyclerView.State?,scrolled: Int,dx: Int){
+        if (onOverScrollListener != null && recycler != null){
+            val overScroll = dx - scrolled
+            if (overScroll > 0){
+                //Right
+                onOverScrollListener.onRightOverScroll(recycler,state)
+            }else if (overScroll < 0){
+                //Left
+                onOverScrollListener.onLeftOverScroll(recycler,state)
+            }
+        }
+    }
 
     override fun onLayoutChildren(recycler: RecyclerView.Recycler?, state: RecyclerView.State?) {
         super.onLayoutChildren(recycler, state)
@@ -54,6 +68,7 @@ class CarouselLinearLayoutManager(
 
                         child.scaleX = scalingFactor
                         child.scaleY = scalingFactor
+                        executeOverScroll(recycler,state, scrolled, dx)
                     }
                 }
             } catch (e: Exception) {
@@ -62,6 +77,7 @@ class CarouselLinearLayoutManager(
 
             scrolled
         } else {
+            executeOverScroll(recycler,state, scrolled, dx)
             scrolled
         }
     }

@@ -77,6 +77,25 @@ class ImageCarousel(
             initOnScrollStateChange()
         }
 
+    var onImageLoadListener: CarouselOnImageLoadListener? = null
+        set(value) {
+            field = value
+
+            initAdapter()
+        }
+
+    var onOverScrollListener: CarouselOnOverScrollListener? = null
+        set(value) {
+            field = value
+
+            recyclerView.layoutManager =
+                    CarouselLinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false,value)
+                            .apply {
+                                scaleOnScroll = this@ImageCarousel.scaleOnScroll
+                                scalingFactor = this@ImageCarousel.scalingFactor
+                            }
+        }
+
     /**
      * Get or set current item position
      */
@@ -420,7 +439,7 @@ class ImageCarousel(
         nextButtonContainer = carouselView.findViewById(R.id.next_button_container)
 
         recyclerView.layoutManager =
-            CarouselLinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            CarouselLinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false,null)
                 .apply {
                     scaleOnScroll = this@ImageCarousel.scaleOnScroll
                     scalingFactor = this@ImageCarousel.scalingFactor
@@ -773,6 +792,10 @@ class ImageCarousel(
 
             initOnScrollStateChange()
         }
+    }
+
+    fun addOnItemTouchListener(listener: RecyclerView.OnItemTouchListener){
+        recyclerView.addOnItemTouchListener(listener)
     }
 
     // ----------------------------------------------------------------
