@@ -1,6 +1,7 @@
 package org.imaginativeworld.whynotimagecarousel
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
@@ -77,7 +78,7 @@ class ImageCarousel(
             initOnScrollStateChange()
         }
 
-    var onImageLoadListener: CarouselOnImageLoadListener? = null
+    var imageViewTargetSetResource: ((ImageView,Bitmap?) -> Unit)? = null
         set(value) {
             field = value
 
@@ -626,7 +627,8 @@ class ImageCarousel(
             imageViewId = imageViewId,
             listener = onItemClickListener,
             imageScaleType = imageScaleType,
-            imagePlaceholder = imagePlaceholder
+            imagePlaceholder = imagePlaceholder,
+            imageViewTargetSetResource = imageViewTargetSetResource
         )
         recyclerView.adapter = adapter
 
