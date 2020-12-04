@@ -78,7 +78,7 @@ class ImageCarousel(
             initOnScrollStateChange()
         }
 
-    var imageViewTargetSetResource: ((ImageView,Bitmap?) -> Unit)? = null
+    var imageViewHandler: ((Context,ImageView,CarouselItem) -> Unit)? = null
         set(value) {
             field = value
 
@@ -628,7 +628,7 @@ class ImageCarousel(
             listener = onItemClickListener,
             imageScaleType = imageScaleType,
             imagePlaceholder = imagePlaceholder,
-            imageViewTargetSetResource = imageViewTargetSetResource
+            imageViewHandler = imageViewHandler
         )
         recyclerView.adapter = adapter
 

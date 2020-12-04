@@ -1,7 +1,6 @@
 package org.imaginativeworld.whynotimagecarousel
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +11,6 @@ import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.BitmapImageViewTarget
 
 
 class CarouselAdapter(
@@ -25,7 +23,7 @@ class CarouselAdapter(
     var listener: OnItemClickListener? = null,
     private val imageScaleType: ImageView.ScaleType,
     private val imagePlaceholder: Drawable?,
-    private val imageViewTargetSetResource: ((ImageView,Bitmap?) -> Unit)?
+    private val imageViewHandler: ((Context,ImageView,CarouselItem) -> Unit)?
 ) : RecyclerView.Adapter<CarouselAdapter.MyViewHolder>() {
 
     class MyViewHolder(itemView: View, imageViewId: Int) : RecyclerView.ViewHolder(itemView) {
@@ -67,34 +65,22 @@ class CarouselAdapter(
         // Init views
         holder.img.scaleType = imageScaleType
 
-        if (item.imageUrl != null) {
-            Glide.with(context.applicationContext).asBitmap()
-                    .load(item.imageUrl)
-                    .placeholder(imagePlaceholder)
-                    .into(object : BitmapImageViewTarget(holder.img){
-                        override fun setResource(resource: Bitmap?) {
-                            if (imageViewTargetSetResource != null){
-                                imageViewTargetSetResource.invoke(holder.img,resource)
-                            }
-                            else{
-                                super.setResource(resource)
-                            }
-                        }
-                    })
-        } else {
-            Glide.with(context.applicationContext).asBitmap()
-                    .load(item.imageDrawable)
-                    .placeholder(imagePlaceholder)
-                    .into(object : BitmapImageViewTarget(holder.img){
-                        override fun setResource(resource: Bitmap?) {
-                            if (imageViewTargetSetResource != null){
-                                imageViewTargetSetResource.invoke(holder.img,resource)
-                            }
-                            else{
-                                super.setResource(resource)
-                            }
-                        }
-                    })
+        if (imageViewHandler == null){
+            if (item.imageUrl != null) {
+                Glide.with(context.applicationContext)
+                        .load(item.imageUrl)
+                        .placeholder(imagePlaceholder)
+                        .into(holder.img)
+            }
+            else {
+                Glide.with(context.applicationContext)
+                        .load(item.imageDrawable)
+                        .placeholder(imagePlaceholder)
+                        .into(holder.img)
+            }
+        }
+        else{
+            imageViewHandler.invoke(context.applicationContext,holder.img,item)
         }
 
 
