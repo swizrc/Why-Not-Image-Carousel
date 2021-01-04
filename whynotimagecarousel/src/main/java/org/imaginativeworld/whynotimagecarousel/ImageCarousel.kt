@@ -62,7 +62,8 @@ class ImageCarousel(
     private var isBuiltInIndicator = false
     private var autoPlayHandler: Handler = Handler()
     private var data: List<CarouselItem>? = null
-    private var dataSize = 0
+    var dataSize = 0
+        private set
 
     var onItemClickListener: OnItemClickListener? = null
         set(value) {
@@ -78,7 +79,7 @@ class ImageCarousel(
             initOnScrollStateChange()
         }
 
-    var imageViewHandler: ((Context,ImageView,CarouselItem) -> Unit)? = null
+    var imageViewHandler: ((Context,View,ImageView.ScaleType,CarouselItem) -> Unit)? = null
         set(value) {
             field = value
 

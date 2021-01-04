@@ -23,11 +23,11 @@ class CarouselAdapter(
     var listener: OnItemClickListener? = null,
     private val imageScaleType: ImageView.ScaleType,
     private val imagePlaceholder: Drawable?,
-    private val imageViewHandler: ((Context,ImageView,CarouselItem) -> Unit)?
+    private val imageViewHandler: ((Context,View,ImageView.ScaleType,CarouselItem) -> Unit)?
 ) : RecyclerView.Adapter<CarouselAdapter.MyViewHolder>() {
 
     class MyViewHolder(itemView: View, imageViewId: Int) : RecyclerView.ViewHolder(itemView) {
-        var img: ImageView = itemView.findViewById(imageViewId)
+        var imgView: View = itemView.findViewById(imageViewId)
     }
 
     private val dataList: MutableList<CarouselItem> = mutableListOf()
@@ -63,24 +63,28 @@ class CarouselAdapter(
 
 
         // Init views
-        holder.img.scaleType = imageScaleType
-
         if (imageViewHandler == null){
-            if (item.imageUrl != null) {
-                Glide.with(context.applicationContext)
-                        .load(item.imageUrl)
-                        .placeholder(imagePlaceholder)
-                        .into(holder.img)
-            }
-            else {
-                Glide.with(context.applicationContext)
-                        .load(item.imageDrawable)
-                        .placeholder(imagePlaceholder)
-                        .into(holder.img)
+            if (holder.imgView is ImageView){
+                val imageView = holder.imgView as ImageView
+
+                imageView.scaleType = imageScaleType
+
+                if (item.imageUrl != null) {
+                    Glide.with(context.applicationContext)
+                            .load(item.imageUrl)
+                            .placeholder(imagePlaceholder)
+                            .into(imageView)
+                }
+                else {
+                    Glide.with(context.applicationContext)
+                            .load(item.imageDrawable)
+                            .placeholder(imagePlaceholder)
+                            .into(imageView)
+                }
             }
         }
         else{
-            imageViewHandler.invoke(context.applicationContext,holder.img,item)
+            imageViewHandler.invoke(context.applicationContext,holder.imgView,imageScaleType,item)
         }
 
 
